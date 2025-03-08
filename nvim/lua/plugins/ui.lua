@@ -5,6 +5,17 @@ return {
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
-    enabled = false,
+    enabled = true,
+  },
+  {
+    {
+      "folke/noice.nvim",
+      opts = {
+        notify = {
+          enabled = false,
+        },
+      },
+    },
+    { "rcarriga/nvim-notify", enabled = false },
   },
 }
