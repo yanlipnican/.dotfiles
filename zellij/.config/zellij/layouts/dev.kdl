@@ -1,0 +1,46 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+    tab name="Git & Claude" cwd="~/Workspace/theydo" {
+        pane split_direction="vertical" {
+            pane size="50%" command="/opt/homebrew/bin/fish"
+            pane size="50%" command="/opt/homebrew/bin/fish"
+        }
+    }
+
+    tab name="Editor" cwd="~/Workspace/theydo" {
+      pane command="/opt/homebrew/bin/fish"
+    }
+
+    tab name="Garbage" cwd="~/" {
+        pane command="/opt/homebrew/bin/fish"
+    }
+
+    tab name="Theydo" cwd="~/Workspace/theydo" {
+        pane split_direction="vertical" {
+            pane size="50%" command="/opt/homebrew/bin/fish"
+            pane split_direction="horizontal" {
+                pane command="/opt/homebrew/bin/fish"
+                pane command="/opt/homebrew/bin/fish"
+            }
+        }
+    }
+
+    tab name="Journey AI" cwd="~/Workspace/theydo-journey-ai/api" {
+        pane split_direction="vertical" {
+            pane size="50%" command="/opt/homebrew/bin/fish"
+            pane size="50%" {
+                command "/opt/homebrew/bin/fish"
+                args "-c" "docker compose up --build"
+            }
+        }
+    }
+}
