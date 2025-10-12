@@ -1,15 +1,12 @@
 python 3.11.9
 node 22.20.0
-neovim
-fd
-ripgrep
-rust
-cmake
-lazygit
-zellij
-atuin
-claude
-github-cli
-ffmpeg
-fzf
-tree-sitter
+fd latest
+ripgrep latest
+rust latest
+lazygit latest
+zellij latest
+atuin latest
+claude latest
+github-cli latest
+fzf latest
+tree-sitter latest

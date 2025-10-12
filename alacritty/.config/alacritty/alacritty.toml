@@ -14,7 +14,7 @@ decorations_theme_variant = "Dark"
 startup_mode = "Maximized"
 
 [terminal]
-shell = { program = "/Users/janlipnican/.cargo/bin/zellij", args = ["-l", "welcome"] }
+shell = { program = "zellij", args = ["-l", "welcome"] }
 
 [keyboard]
 bindings = [
