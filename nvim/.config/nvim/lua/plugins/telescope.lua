@@ -8,6 +8,9 @@ return {
           require("telescope").load_extension("live_grep_args")
         end)
       end,
+      attach_mappings = function()
+        vim.keymap.set("i", "<C-v>", '<C-r>+', { buffer = true })
+      end,
       keys = {
         { "<leader>/", ":Telescope live_grep_args<CR>", desc = "Live Grep" },
       },
