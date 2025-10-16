@@ -50,11 +50,13 @@ return {
     dependencies = {
       "nvim-neotest/nvim-nio",
       "marilari88/neotest-vitest",
+      "orjangj/neotest-ctest",
     },
     opts = {
       adapters = {
         ["neotest-vitest"] = {},
+        ["neotest-ctest"] = {},
       },
     },
-  }
+  },
 }

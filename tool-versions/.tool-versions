@@ -4,6 +4,7 @@ fd latest
 ripgrep latest
 rust latest
 lazygit latest
+lazydocker latest
 zellij latest
 atuin latest
 claude latest
