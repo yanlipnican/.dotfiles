@@ -1,25 +1,14 @@
 #!/bin/bash
-# Open a zellij tab with lazygit + opencode for a worktree.
+# Open a tab with lazygit + opencode for a worktree.
 # Resumes an opencode session by worktree name if one exists.
 # If no session found, creates one by writing the session file directly.
+# Supports: kitty, zellij
 # Usage: opencode-worktree.sh <worktree-path> <worktree-name>
 
 set -euo pipefail
 
 WORKTREE_PATH="$(cd "${1:?Usage: opencode-worktree.sh <path> <name>}" && pwd -P)"
 WORKTREE_NAME="${2:?Usage: opencode-worktree.sh <path> <name>}"
-
-# If not inside zellij, just open editor in the worktree
-if [ -z "${ZELLIJ:-}" ]; then
-  cd "$WORKTREE_PATH"
-  exec "${EDITOR:-nvim}" .
-fi
-
-# If tab already exists, just focus it
-if zellij action query-tab-names 2>/dev/null | grep -qx "$WORKTREE_NAME"; then
-  zellij action go-to-tab-name "$WORKTREE_NAME"
-  exit 0
-fi
 
 SESSION_DIR="$HOME/.local/share/opencode/storage/session"
 
@@ -61,7 +50,6 @@ fi
 # If no session found, create one by writing the file directly
 if [ -z "$SESSION_ID" ] && [ -n "$PROJECT_ID" ]; then
   TIMESTAMP=$(date +%s)000
-  # Generate a unique session ID
   SESSION_ID="ses_$(openssl rand -hex 6)$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 14)"
   SLUG_ADJ=("quick" "bright" "calm" "bold" "keen" "warm" "swift" "cool" "fair" "wise")
   SLUG_NOUN=("fox" "owl" "elk" "jay" "bee" "ram" "cod" "ant" "emu" "yak")
@@ -84,23 +72,43 @@ if [ -z "$SESSION_ID" ] && [ -n "$PROJECT_ID" ]; then
 EOF
 fi
 
-# Create new tab
-zellij action new-tab --cwd "$WORKTREE_PATH" --name "$WORKTREE_NAME"
-
-# Start lazygit in the left pane
-zellij action write-chars "lazygit"
-zellij action write 10
-
-# Open right pane for opencode
-zellij action new-pane --direction right --cwd "$WORKTREE_PATH"
-
-zellij action write-chars "cd '$WORKTREE_PATH'"
-zellij action write 10
-sleep 0.5
-
+OPENCODE_CMD="opencode --port"
 if [ -n "$SESSION_ID" ]; then
-  zellij action write-chars "opencode --port -s '$SESSION_ID'"
-else
-  zellij action write-chars "opencode --port"
+  OPENCODE_CMD="opencode --port -s '$SESSION_ID'"
 fi
-zellij action write 10
+
+# --- Kitty ---
+if [ -n "${KITTY_WINDOW_ID:-}" ]; then
+  if kitty @ ls 2>/dev/null | jq -e --arg name "$WORKTREE_NAME" '.[].tabs[] | select(.title == $name)' > /dev/null 2>&1; then
+    kitty @ focus-tab --match "title:^${WORKTREE_NAME}$"
+    exit 0
+  fi
+  LG_ID=$(kitty @ launch --type=tab --tab-title "$WORKTREE_NAME" --cwd "$WORKTREE_PATH")
+  kitty @ send-text --match "id:$LG_ID" "lazygit\r"
+  kitty @ goto-layout splits
+  OC_ID=$(kitty @ launch --type=window --location=vsplit --cwd "$WORKTREE_PATH")
+  kitty @ send-text --match "id:$OC_ID" "${OPENCODE_CMD}\r"
+  exit 0
+fi
+
+# --- Zellij ---
+if [ -n "${ZELLIJ:-}" ]; then
+  if zellij action query-tab-names 2>/dev/null | grep -qx "$WORKTREE_NAME"; then
+    zellij action go-to-tab-name "$WORKTREE_NAME"
+    exit 0
+  fi
+  zellij action new-tab --cwd "$WORKTREE_PATH" --name "$WORKTREE_NAME"
+  zellij action write-chars "lazygit"
+  zellij action write 10
+  zellij action new-pane --direction right --cwd "$WORKTREE_PATH"
+  zellij action write-chars "cd '$WORKTREE_PATH'"
+  zellij action write 10
+  sleep 0.5
+  zellij action write-chars "$OPENCODE_CMD"
+  zellij action write 10
+  exit 0
+fi
+
+# Fallback
+cd "$WORKTREE_PATH"
+exec "${EDITOR:-nvim}" .

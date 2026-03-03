@@ -1,6 +1,9 @@
 git:
   pull:
     mode: 'current-branch' # Only pull the current branch
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never --syntax-theme="GitHub Dark Default"
 gui:
   # GitHub Dark theme
   theme:
