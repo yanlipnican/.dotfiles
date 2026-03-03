@@ -84,5 +84,7 @@
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true,
     "linear-cli@linear-cli": true
-  }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "model": "sonnet"
 }

@@ -1,6 +1,8 @@
 # Himalaya Configuration Reference
 
-Configuration file location: `~/.config/himalaya/config.toml`
+Configuration file location: `~/.config/himalaya/config.toml` or `~/Library/Application Support/himalaya/config.toml` (macOS).
+
+**IMPORTANT:** Always check if a config already exists before creating or overwriting. Read the file first.
 
 ## Minimal IMAP + SMTP Setup
 
@@ -44,7 +46,7 @@ backend.auth.cmd = "pass show email/imap"
 # backend.auth.cmd = "security find-generic-password -a user@example.com -s imap -w"
 ```
 
-### System keyring (requires keyring feature)
+### System keyring (requires keyring cargo feature — may NOT be compiled in)
 
 ```toml
 backend.auth.keyring = "imap-example"
@@ -52,7 +54,11 @@ backend.auth.keyring = "imap-example"
 
 Then run `himalaya account configure <account>` to store the password.
 
+**Note:** If you get `missing 'keyring' cargo feature` error, this build of himalaya doesn't support it. Use `cmd` instead.
+
 ## Gmail Configuration
+
+Gmail requires an App Password if 2FA is enabled (generate at https://myaccount.google.com/apppasswords). Use port 465 with TLS for SMTP.
 
 ```toml
 [accounts.gmail]
@@ -60,24 +66,29 @@ email = "you@gmail.com"
 display-name = "Your Name"
 default = true
 
+folder.aliases.inbox = "INBOX"
+folder.aliases.sent = "[Gmail]/Sent Mail"
+folder.aliases.drafts = "[Gmail]/Drafts"
+folder.aliases.trash = "[Gmail]/Trash"
+
 backend.type = "imap"
 backend.host = "imap.gmail.com"
 backend.port = 993
 backend.encryption.type = "tls"
 backend.login = "you@gmail.com"
 backend.auth.type = "password"
-backend.auth.cmd = "pass show google/app-password"
+backend.auth.cmd = "security find-generic-password -a 'you@gmail.com' -s 'gmail-app-password' -w"
 
 message.send.backend.type = "smtp"
 message.send.backend.host = "smtp.gmail.com"
-message.send.backend.port = 587
-message.send.backend.encryption.type = "start-tls"
+message.send.backend.port = 465
+message.send.backend.encryption.type = "tls"
 message.send.backend.login = "you@gmail.com"
 message.send.backend.auth.type = "password"
-backend.auth.cmd = "pass show google/app-password"
+message.send.backend.auth.cmd = "security find-generic-password -a 'you@gmail.com' -s 'gmail-app-password' -w"
 ```
 
-**Note:** Gmail requires an App Password if 2FA is enabled.
+**Gmail IMAP quirk:** Category tabs (Promotions, Social, Updates, Forums) do NOT map to IMAP folders. All categorized mail lives in INBOX via IMAP.
 
 ## iCloud Configuration
 

@@ -1,5 +1,7 @@
 general.import = [
   "~/.config/alacritty/catppuccin-mocha.toml"
+  # "~/.config/alacritty/kanagawa-dragon.toml"
+  # "~/.config/alacritty/gruvbox-light.toml"
 ]
 
 [font]
@@ -14,7 +16,7 @@ decorations_theme_variant = "Dark"
 startup_mode = "Maximized"
 
 [terminal]
-shell = { program = "zellij", args = ["-l", "welcome"] }
+# shell = { program = "zellij", args = ["-l", "welcome"] }
 
 [keyboard]
 bindings = [
