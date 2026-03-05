@@ -8,6 +8,14 @@ set -euo pipefail
 WORKTREE_PATH="$(cd "${1:?Usage: worktree.sh <path> <name>}" && pwd -P)"
 WORKTREE_NAME="${2:?Usage: worktree.sh <path> <name>}"
 
+ITERM_PYTHON=$(which python3)
+
+# --- iTerm2 ---
+if [ -n "${ITERM_SESSION_ID:-}" ] && [ -n "$ITERM_PYTHON" ]; then
+  "$ITERM_PYTHON" ~/.config/iterm2/scripts/worktree.py "$WORKTREE_PATH" "$WORKTREE_NAME"
+  exit 0
+fi
+
 # --- Kitty ---
 if [ -n "${KITTY_WINDOW_ID:-}" ]; then
   if kitty @ ls 2>/dev/null | jq -e --arg name "$WORKTREE_NAME" '.[].tabs[] | select(.title == $name)' > /dev/null 2>&1; then
