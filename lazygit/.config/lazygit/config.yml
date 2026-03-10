@@ -26,53 +26,79 @@ gui:
       - "#e6edf3"
     searchingActiveBorderColor:
       - "#e3b341"
-  # Catppuccin Mocha theme
-  # theme:
-  #   activeBorderColor:
-  #     - "#89b4fa"
-  #     - bold
-  #   inactiveBorderColor:
-  #     - "#a6adc8"
-  #   optionsTextColor:
-  #     - "#89b4fa"
-  #   selectedLineBgColor:
-  #     - "#313244"
-  #   cherryPickedCommitBgColor:
-  #     - "#45475a"
-  #   cherryPickedCommitFgColor:
-  #     - "#89b4fa"
-  #   unstagedChangesColor:
-  #     - "#f38ba8"
-  #   defaultFgColor:
-  #     - "#cdd6f4"
-  #   searchingActiveBorderColor:
-  #     - "#f9e2af"
-  # Kanagawa Dragon theme
-  # theme:
-  #   activeBorderColor:
-  #     - "#c4b28a"
-  #     - bold
-  #   inactiveBorderColor:
-  #     - "#a6a69c"
-  #   optionsTextColor:
-  #     - "#c4b28a"
-  #   selectedLineBgColor:
-  #     - "#282727"
-  #   cherryPickedCommitBgColor:
-  #     - "#393836"
-  #   cherryPickedCommitFgColor:
-  #     - "#c4b28a"
-  #   unstagedChangesColor:
-  #     - "#c4746e"
-  #   defaultFgColor:
-  #     - "#c5c9c5"
-  #   searchingActiveBorderColor:
-  #     - "#FF9E3B"
+      # Catppuccin Mocha theme
+      # theme:
+      #   activeBorderColor:
+      #     - "#89b4fa"
+      #     - bold
+      #   inactiveBorderColor:
+      #     - "#a6adc8"
+      #   optionsTextColor:
+      #     - "#89b4fa"
+      #   selectedLineBgColor:
+      #     - "#313244"
+      #   cherryPickedCommitBgColor:
+      #     - "#45475a"
+      #   cherryPickedCommitFgColor:
+      #     - "#89b4fa"
+      #   unstagedChangesColor:
+      #     - "#f38ba8"
+      #   defaultFgColor:
+      #     - "#cdd6f4"
+      #   searchingActiveBorderColor:
+      #     - "#f9e2af"
+      # Kanagawa Dragon theme
+      # theme:
+      #   activeBorderColor:
+      #     - "#c4b28a"
+      #     - bold
+      #   inactiveBorderColor:
+      #     - "#a6a69c"
+      #   optionsTextColor:
+      #     - "#c4b28a"
+      #   selectedLineBgColor:
+      #     - "#282727"
+      #   cherryPickedCommitBgColor:
+      #     - "#393836"
+      #   cherryPickedCommitFgColor:
+      #     - "#c4b28a"
+      #   unstagedChangesColor:
+      #     - "#c4746e"
+      #   defaultFgColor:
+      #     - "#c5c9c5"
+      #   searchingActiveBorderColor:
+      #     - "#FF9E3B"
 customCommands:
+  - key: '<c-g>'
+    context: 'global'
+    description: 'Fulltext search and open in editor'
+    command: "set RESULT (rg --color=always --line-number --no-heading '' | fzf --ansi --delimiter ':' --preview 'bat --color=always --highlight-line {2} {1}' --preview-window 'right:60%:+{2}-5'); and $EDITOR +(string split -f2 ':' $RESULT) (string split -f1 ':' $RESULT); true"
+    output: terminal
+  - key: '<c-e>'
+    context: 'global'
+    description: 'Open editor'
+    command: '$EDITOR'
+    output: terminal
+  - key: '<c-f>'
+    context: 'global'
+    description: 'Open file in editor via fzf'
+    command: 'set FILE (fd --type f --hidden --exclude .git | fzf --preview "bat --color=always {}"); and $EDITOR $FILE; true'
+    output: terminal
   - key: 'o'
     context: 'worktrees'
-    command: "~/.config/zellij/scripts/claude-worktree.sh {{.SelectedWorktree.Path | quote}} {{.SelectedWorktree.Name | quote}}"
-    description: 'Open worktree in new zellij tab'
+    command: "~/.config/tmux/scripts/claude-worktree.sh {{.SelectedWorktree.Path | quote}} {{.SelectedWorktree.Name | quote}}"
+    description: 'Open worktree in new tmux session'
+    output: terminal
+  - key: 'm'
+    context: 'worktrees'
+    description: 'Reset main worktree to selected worktree branch (incl. unstaged changes)'
+    prompts:
+      - type: 'confirm'
+        title: 'Reset main worktree?'
+        body: 'This will hard reset the main worktree to {{.SelectedWorktree.Branch}} and apply unstaged changes. Uncommitted changes in main will be lost.'
+    command: >-
+      set MAIN (git worktree list | awk 'NR==1{print $1}'); git -C $MAIN reset --hard {{.SelectedWorktree.Branch | quote}}; git -C {{.SelectedWorktree.Path | quote}} diff HEAD | git -C $MAIN apply
+    output: terminal
   - key: 'n'
     context: 'worktrees'
     prompts:
@@ -80,7 +106,6 @@ customCommands:
         title: 'Branch name for new worktree:'
         key: 'BranchName'
     command: >-
-      set PROJECT (basename (git rev-parse --show-toplevel)); and
-      git worktree add "../worktrees/$PROJECT/{{.Form.BranchName}}" -b "{{.Form.BranchName}}"; and
-      ~/.config/zellij/scripts/worktree.sh "../worktrees/$PROJECT/{{.Form.BranchName}}" "{{.Form.BranchName}}"
-    description: 'Create worktree and open in zellij tab'
+      set PROJECT (basename (git rev-parse --show-toplevel)); and git worktree add "../worktrees/$PROJECT/{{.Form.BranchName}}" -b "{{.Form.BranchName}}"; and ~/.config/tmux/scripts/worktree.sh "../worktrees/$PROJECT/{{.Form.BranchName}}" "{{.Form.BranchName}}"
+    description: 'Create worktree and open in tmux session'
+    output: terminal

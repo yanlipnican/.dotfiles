@@ -1,8 +1,8 @@
 return {
-  -- {
-  --   "nvim-treesitter/nvim-treesitter",
-  --   opts = { ensure_installed = { "vue", "css" } },
-  -- },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = { ensure_installed = { "vue", "javascript", "typescript", "css" } },
+  },
   -- {
   --   "williamboman/mason.nvim",
   --   opts = {
