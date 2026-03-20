@@ -405,7 +405,13 @@ set -g mouse on
 # bind c new-window -c '#{pane_current_path}' #!important
 
 bind q kill-session
-bind W run-shell "~/.config/tmux/scripts/session-picker.sh"
+
+# tmux-conductor
+set -g @conductor-projects "$HOME/Workspace/theydo:$HOME/Workspace/theydo-journey-ai"
+set -g @conductor-worktrees-dir "$HOME/Workspace/worktrees"
+set -g @conductor-new-session-script "~/.config/tmux/scripts/claude-worktree.sh"
+set -g @conductor-status-var "CLAUDE_STATUS"
+run-shell "~/.tmux/plugins/tmux-conductor/conductor.tmux"
 
 # display a message after toggling mouse support
 bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?#{mouse},on,off}'

@@ -28,6 +28,11 @@
             "type": "command",
             "command": "python3 /Users/janlipnican/.claude/hooks/status_writer.py PreToolUse",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash /Users/janlipnican/.claude/hooks/tmux-status.sh PreToolUse",
+            "timeout": 5
           }
         ]
       }
@@ -40,6 +45,11 @@
             "type": "command",
             "command": "python3 /Users/janlipnican/.claude/hooks/status_writer.py Notification",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash /Users/janlipnican/.claude/hooks/tmux-status.sh Notification",
+            "timeout": 5
           }
         ]
       }
@@ -50,6 +60,11 @@
           {
             "type": "command",
             "command": "python3 /Users/janlipnican/.claude/hooks/status_writer.py Stop",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash /Users/janlipnican/.claude/hooks/tmux-status.sh Stop",
             "timeout": 5
           }
         ]

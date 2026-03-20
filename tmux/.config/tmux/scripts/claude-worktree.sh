@@ -11,7 +11,7 @@ sleep 0.2
 if ! tmux has-session -t "=$WORKTREE_NAME" 2>/dev/null; then
   # Create session and capture the first pane ID
   PANE_LEFT=$(tmux new-session -d -s "$WORKTREE_NAME" -c "$WORKTREE_PATH" -x 220 -y 50 -P -F '#{pane_id}')
-  tmux set-environment -t "$WORKTREE_NAME" CLAUDE_WORKTREE 1
+  tmux set-environment -t "$WORKTREE_NAME" CONDUCTOR_SESSION 1
 
   # Split right 60% for claude, capture pane ID
   PANE_CLAUDE=$(tmux split-window -h -l "60%" -t "$PANE_LEFT" -c "$WORKTREE_PATH" -P -F '#{pane_id}')
@@ -21,7 +21,7 @@ if ! tmux has-session -t "=$WORKTREE_NAME" 2>/dev/null; then
 
   # Send commands using captured pane IDs
   tmux send-keys -t "$PANE_LEFT" "lazygit" Enter
-  tmux send-keys -t "$PANE_CLAUDE" "claude --resume --ide" Enter
+  tmux send-keys -t "$PANE_CLAUDE" "claude --ide --dangerously-skip-permissions" Enter
 
   # Focus claude
   tmux select-pane -t "$PANE_CLAUDE"
